@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 to MP4 Converter | Resize_Orbi</title>
+    <link rel="stylesheet" href="styles.css">
+      <link rel="shortcut icon" href="fg.png">
+    <div class="logo-box">
+    <img src="s1.png" alt="Logo" class="site-logo">
+</div>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+       
+        :root {
+            --primary-color: #9932cc;
+            --secondary-color: #ff8c00;
+            --text-color: #65b5dd;
+            --bg-color: #252424;
+            --card-bg: #f5f7fa;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --header-bg: #454242;
+            --footer-bg: #f8f9fa;
+            --input-bg: #7a2f2f;
+        }
+
+        
+        [data-theme="dark"] {
+            --primary-color: #bb86fc;
+            --secondary-color: #ffab40;
+            --text-color: #78aae8;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow-color: rgba(0,0,0,0.3);
+            --header-bg: #1e1e1e;
+            --footer-bg: #1e1e1e;
+            --input-bg: #2d2d2d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: rgb(128, 130, 28);
+            transition: all 0.3s ease;
+        }
+
+        header, footer {
+            background-color: var(--header-bg);
+            border-color: var(--border-color);
+        }
+
+        footer {
+            background-color: var(--footer-bg);
+        }
+
+        /* Toggle switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 2px;
+            bottom: 2px;
+            background-color: rgb(14, 3, 3);
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 0 3px rgba(0,0,0,0.3);
+        }
+
+        input:checked + .slider {
+            background-color: chartreuse;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .slider .icons {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            color: white;
+        }
+        
+        .theme-label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: bold;
+            color:rgb(70, 129, 135);
+        }
+
+        .upload-container {
+            position: relative;
+            border: 3px dashed var(--primary-color);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(153, 50, 204, 0.08);
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .upload-container:hover {
+            background-color: rgba(153, 50, 204, 0.15);
+            border-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .upload-container.dragover {
+            background-color: rgba(153, 50, 204, 0.25);
+            border-color: #8a2be2;
+            transform: scale(1.03);
+        }
+
+        .upload-container i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .file-info {
+            display: none;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 1.5rem 0;
+         color: #218838;
+        }
+
+        .convert-btn, .download-btn, .reset-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: #8a2be2;
+            transform: translateY(-2px);
+        }
+
+        .convert-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .download-btn {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .settings-section {
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .settings-section h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .settings-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .settings-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        select, input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: rgb(234, 236, 238);
+            width: 100%;
+        }
+
+        .image-select-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .image-option {
+            width: 120px;
+            height: 80px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .image-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-option.selected {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .image-option:hover {
+            transform: scale(1.05);
+        }
+
+        .upload-image-btn {
+            width: 120px;
+            height: 80px;
+            border: 2px dashed var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color:red;
+        }
+
+        .upload-image-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .upload-image-btn i {
+            font-size: 1.5rem;
+            margin-right: 5px;
+        }
+
+        #custom-image-input {
+            display: none;
+        }
+
+        #audio-player {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .compatibility-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .compatibility-icon i {
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .compatibility-text {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        #video-preview {
+            max-width: 100%;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+             <div class="logo">
+                <img src="logo-r.svg" alt="Resize_Orbi Logo" class="logo-img">
+                <h1>Resize_Orbi</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <span style="color: #fb1616;"><h>Home</h></span>
+                </a></li>
+                <li><a href="index.html#about">
+                    <span style="color: #fcfcfc;"><h>About</h></span>
+                </a></li>
+                <li><a href="index.html#contact">
+                    <span style="color: #15ea12;"><h>Developed By</h></span>
+                </a></li>
+                <li class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider">
+                            <div class="icons">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </div>
+                        </div>
+                    </label>
+                    <span class="theme-label">Light/Dark</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="converter-container">
+            <h1>MP3 to MP4 Converter</h1>
+            <p>Convert your audio MP3 files to video MP4 format with a static image or visualizer.</p>
+            
+            <div class="compatibility-icon">
+                <i class="fas fa-file-audio"></i>
+                <i class="fas fa-arrow-right"></i>
+                <i class="fas fa-file-video"></i>
+                <span class="compatibility-text">Add visuals to your audio files</span>
+            </div>
+            
+            <div class="upload-container">
+                <i class="fas fa-file-audio"></i>
+                <h3>Upload MP3 File</h3>
+                <p>Drag & drop your file here or click to browse</p>
+                <p class="file-type-hint">Accepted format: MP3</p>
+                <input type="file" id="audio-input" accept=".mp3">
+            </div>
+            
+            <div class="file-info">
+                <h3>Audio Information</h3>
+                <p>Filename: <span id="file-name"></span></p>
+                <p>Duration: <span id="audio-duration">Processing...</span></p>
+                
+                <audio id="audio-player" controls></audio>
+                
+                <div class="settings-section">
+                    <h3>Video Settings</h3>
+                    <div class="settings-row">
+                        <div class="settings-group">
+                            <label for="video-resolution">Resolution:</label>
+                            <select id="video-resolution">
+                                <option value="720p">720p (HD)</option>
+                                <option value="1080p" selected>1080p (Full HD)</option>
+                                <option value="480p">480p (SD)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="video-format">Format:</label>
+                            <select id="video-format">
+                                <option value="mp4" selected>MP4 (H.264)</option>
+                                <option value="webm">WebM (VP9)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <div class="settings-group">
+                            <label for="visual-type">Visual Type:</label>
+                            <select id="visual-type">
+                                <option value="image" selected>Static Image</option>
+                                <option value="waveform">Audio Waveform</option>
+                                <option value="spectrum">Audio Spectrum</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="visual-theme">Visual Theme:</label>
+                            <select id="visual-theme">
+                                <option value="light" selected>Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="colorful">Colorful</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h4>Background Image</h4>
+                    <div class="image-select-container">
+                        <div class="image-option selected" data-image="gradient1">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQO9sZb60U_WJJ5Alp1dQ01F_rKpmmRerzMQQ&s" alt="Gradient 1">
+                        </div>
+                        <div class="image-option" data-image="gradient2">
+                            <img src="https://png.pngtree.com/thumb_back/fh260/background/20230624/pngtree-ultraviolet-spectrum-glowing-sound-waves-in-3d-rendered-abstract-neon-background-image_3671906.jpg" alt="Gradient 2">
+                        </div>
+                        <div class="image-option" data-image="music">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzE2Tj3BTjz7OtfXG1YgCS_OMhTrcnUs-dKmJX5tbumjHsYBqrpA6FBVk6RBSsGwJuVW8&usqp=CAU" alt="Music">
+                        </div>
+                        <div class="image-option" data-image="abstract">
+                            <img src="https://t4.ftcdn.net/jpg/07/03/57/11/360_F_703571101_ZnHApBcoQtSnSZcYQHN1r805PJgfPXBb.jpg" alt="Abstract">
+                        </div>
+                        <div class="upload-image-btn">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload</span>
+                            <input type="file" id="custom-image-input" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h3>Preview</h3>
+                    <video id="video-preview" controls></video>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="convert-btn" class="convert-btn">Convert to MP4</button>
+                    <button id="reset-btn" class="reset-btn">Clear & Upload New</button>
+                </div>
+                
+                <a href="#" id="download-btn" class="download-btn">Download MP4</a>
+                
+                <p class="error-message" id="error-message"></p>
+            </div>
+            
+            <div class="conversion-info">
+                <h3>About MP3 to MP4 Conversion</h3>
+                <p>Our MP3 to MP4 converter allows you to transform your audio files into video format, perfect for platforms that require video content. This is useful for:</p>
+                <ul>
+                    <li>Uploading music or podcasts to YouTube</li>
+                    <li>Creating simple music videos for social media</li>
+                    <li>Adding a visual component to audio recordings</li>
+                    <li>Creating audio visualizations for presentations</li>
+                </ul>
+                <p>The conversion process preserves your audio quality while adding a static image background or dynamic audio visualization to create a video file compatible with all major platforms.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>
+                  <span style="color: #d84d4d;"><h>Resize_Orbi</h></span>
+                </h3>
+                <p>Your one-stop solution for all file conversion needs</p>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <span style="color: #d84d4d;"><h1>Quick Acton</h1></span>
+                </h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Developd By</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3><span style="color: #d84d4d;"><h>Contact With Developer</h></span>
+
+                </h3>
+                <p>Email:satyajitpratihar26@gmail.com</p>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Resize_Orbi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme switcher
+            const toggleSwitch = document.querySelector('#checkbox');
+            const currentTheme = localStorage.getItem('theme');
+            
+            // Check if theme is already stored
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                if (currentTheme === 'dark') {
+                    toggleSwitch.checked = true;
+                }
+            }
+            
+            // Handle theme switch
+            function switchTheme(e) {
+                if (e.target.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }    
+            }
+            
+            // Add event listener
+            toggleSwitch.addEventListener('change', switchTheme, false);
+            
+            // MP3 to MP4 Converter functionality
+            const audioInput = document.getElementById('audio-input');
+            const uploadContainer = document.querySelector('.upload-container');
+            const fileInfo = document.querySelector('.file-info');
+            const fileName = document.getElementById('file-name');
+            const audioDuration = document.getElementById('audio-duration');
+            const audioPlayer = document.getElementById('audio-player');
+            const convertBtn = document.getElementById('convert-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const errorMessage = document.getElementById('error-message');
+            const progressBar = document.querySelector('.progress');
+            const videoResolution = document.getElementById('video-resolution');
+            const videoFormat = document.getElementById('video-format');
+            const visualType = document.getElementById('visual-type');
+            const visualTheme = document.getElementById('visual-theme');
+            const imageOptions = document.querySelectorAll('.image-option');
+            const customImageInput = document.getElementById('custom-image-input');
+            const uploadImageBtn = document.querySelector('.upload-image-btn');
+            const videoPreview = document.getElementById('video-preview');
+            
+            // Variables to store data
+            let audioFile = null;
+            let audioDurationSeconds = 0;
+            let selectedImage = 'gradient1'; // Default image
+            let customImage = null;
+            let downloadUrl = null;
+            
+            // Handle image selection
+            imageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    imageOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Store selected image
+                    selectedImage = this.getAttribute('data-image');
+                    
+                    // Reset custom image
+                    customImage = null;
+                });
+            });
+            
+            // Handle custom image upload button click
+            uploadImageBtn.addEventListener('click', function() {
+                customImageInput.click();
+            });
+            
+            // Handle custom image selection
+            customImageInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    
+                    // Check if it's an image
+                    if (!file.type.startsWith('image/')) {
+                        showError('Please select a valid image file.');
+                        return;
+                    }
+                    
+                    // Remove selected class from all options
+                    imageOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Create a preview of the custom image
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        customImage = event.target.result;
+                        
+                        // Update upload button appearance
+                        uploadImageBtn.innerHTML = '<img src="' + customImage + '" alt="Custom" style="width:100%;height:100%;object-fit:cover;">';
+                        uploadImageBtn.classList.add('selected');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Handle file selection
+            audioInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+            
+            // Drag and drop handlers
+            uploadContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            uploadContainer.addEventListener('dragleave', function() {
+                this.classList.remove('dragover');
+            });
+            
+            uploadContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelection(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // Click to select file
+            uploadContainer.addEventListener('click', function() {
+                audioInput.click();
+            });
+            
+            // Handle reset button
+            resetBtn.addEventListener('click', function() {
+                resetForm();
+            });
+            
+            // Handle convert button
+            convertBtn.addEventListener('click', function() {
+                if (!audioFile) {
+                    showError('Please select an MP3 file.');
+                    return;
+                }
+                
+                convertMp3ToMp4();
+            });
+            
+            // Function to handle file selection
+            function handleFileSelection(file) {
+                // Check if it's an MP3 file
+                if (!file.name.toLowerCase().endsWith('.mp3') && file.type !== 'audio/mpeg') {
+                    showError('Please select a valid MP3 file.');
+                    return;
+                }
+                
+                // Store the file
+                audioFile = file;
+                fileName.textContent = file.name;
+                
+                // Show file info section
+                fileInfo.style.display = 'block';
+                
+                // Hide download button
+                downloadBtn.style.display = 'none';
+                
+                // Hide video preview
+                videoPreview.style.display = 'none';
+                
+                // Create audio player source
+                const objectURL = URL.createObjectURL(file);
+                audioPlayer.src = objectURL;
+                
+                // Get audio duration
+                audioPlayer.onloadedmetadata = function() {
+                    audioDurationSeconds = audioPlayer.duration;
+                    const minutes = Math.floor(audioDurationSeconds / 60);
+                    const seconds = Math.floor(audioDurationSeconds % 60);
+                    audioDuration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                };
+                
+                // Enable convert button
+                convertBtn.disabled = false;
+            }
+            
+            // Function to convert MP3 to MP4
+            function convertMp3ToMp4() {
+                // Show progress bar
+                progressBar.parentElement.style.display = 'block';
+                progressBar.style.width = '10%';
+                
+                // Disable convert button
+                convertBtn.disabled = true;
+                
+                // In a real application, this would use a server-side process or WebAssembly
+                // For demonstration, we'll create a simulated conversion process
+                
+                // Update progress
+                simulateConversion();
+            }
+            
+            // Function to simulate the conversion process
+            function simulateConversion() {
+                let progress = 10;
+                const interval = setInterval(function() {
+                    progress += 5;
+                    progressBar.style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        finishConversion();
+                    }
+                }, 300);
+            }
+            
+            // Function to finish the conversion
+            function finishConversion() {
+                // In a real application, this would process the audio and create a real video
+                // For demonstration, we'll create a placeholder video
+                
+                // Create a simple canvas with the selected image or color
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions based on selected resolution
+                let width, height;
+                if (videoResolution.value === '1080p') {
+                    width = 1920;
+                    height = 1080;
+                } else if (videoResolution.value === '720p') {
+                    width = 1280;
+                    height = 720;
+                } else { // 480p
+                    width = 854;
+                    height = 480;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw background
+                if (customImage) {
+                    // Draw custom image
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0, width, height);
+                        finalizeVideo();
+                    };
+                    img.src = customImage;
+                } else {
+                    // Draw placeholder gradient based on selectedImage
+                    let gradient;
+                    if (selectedImage === 'gradient1') {
+                        gradient = ctx.createLinearGradient(0, 0, width, height);
+                        gradient.addColorStop(0, '#9932cc');
+                        gradient.addColorStop(1, '#ff8c00');
+                    } else if (selectedImage === 'gradient2') {
+                        gradient = ctx.createLinearGradient(0, 0, width, height);
+                        gradient.addColorStop(0, '#ff8c00');
+                        gradient.addColorStop(1, '#ff0080');
+                    } else if (selectedImage === 'music') {
+                        gradient = ctx.createRadialGradient(width/2, height/2, 50, width/2, height/2, width/2);
+                        gradient.addColorStop(0, '#333333');
+                        gradient.addColorStop(1, '#111111');
+                    } else { // abstract
+                        gradient = ctx.createLinearGradient(0, 0, width, height);
+                        gradient.addColorStop(0, '#2196f3');
+                        gradient.addColorStop(1, '#00bcd4');
+                    }
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, width, height);
+                    
+                    // Add some text
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 40px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(fileName.textContent.replace('.mp3', ''), width/2, height/2);
+                    
+                    finalizeVideo();
+                }
+                
+                function finalizeVideo() {
+                    // In a real application, this would:
+                    // 1. Combine the audio with the image to create a video
+                    // 2. Set correct duration equal to the audio
+                    // 3. Handle audio visualizations based on visualType.value
+                    
+                    // For demonstration, we'll display the image and audio
+                    const img = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    // Create a mock video preview
+                    videoPreview.poster = img;
+                    videoPreview.src = audioPlayer.src;
+                    videoPreview.style.display = 'block';
+                    
+                    // Create download URL (in a real app, this would be a video file)
+                    if (downloadUrl) {
+                        URL.revokeObjectURL(downloadUrl);
+                    }
+                    
+                    // In a real implementation, this would be a video file
+                    // For this demo, we'll reuse the audio with the image as a poster
+                    downloadUrl = audioPlayer.src;
+                    
+                    // Update download button
+                    downloadBtn.href = downloadUrl;
+                    downloadBtn.download = fileName.textContent.replace('.mp3', '.mp4');
+                    downloadBtn.style.display = 'inline-block';
+                    
+                    // Hide progress bar after a delay
+                    setTimeout(function() {
+                        progressBar.parentElement.style.display = 'none';
+                        progressBar.style.width = '0%';
+                        
+                        // Enable convert button
+                        convertBtn.disabled = false;
+                        
+                        // Scroll to video preview
+                        videoPreview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 500);
+                }
+            }
+            
+            // Function to reset the form
+            function resetForm() {
+                // Reset file input
+                audioInput.value = '';
+                
+                // Hide file info section
+                fileInfo.style.display = 'none';
+                
+                // Clear audio file
+                audioFile = null;
+                audioDurationSeconds = 0;
+                
+                // Clear audio player
+                audioPlayer.src = '';
+                
+                // Hide video preview
+                videoPreview.style.display = 'none';
+                videoPreview.src = '';
+                videoPreview.poster = '';
+                
+                // Hide progress bar
+                progressBar.parentElement.style.display = 'none';
+                progressBar.style.width = '0%';
+                
+                // Hide download button
+                downloadBtn.style.display = 'none';
+                
+                // Clean up URLs
+                if (downloadUrl) {
+                    URL.revokeObjectURL(downloadUrl);
+                    downloadUrl = null;
+                }
+                
+                // Clear error message
+                errorMessage.style.display = 'none';
+                errorMessage.textContent = '';
+                
+                // Reset settings to defaults
+                videoResolution.value = '1080p';
+                videoFormat.value = 'mp4';
+                visualType.value = 'image';
+                visualTheme.value = 'light';
+                
+                // Reset image selection
+                imageOptions.forEach(opt => opt.classList.remove('selected'));
+                document.querySelector('[data-image="gradient1"]').classList.add('selected');
+                selectedImage = 'gradient1';
+                
+                // Reset custom image
+                customImage = null;
+                uploadImageBtn.innerHTML = '<i class="fas fa-upload"></i><span>Upload</span>';
+                uploadImageBtn.classList.remove('selected');
+                customImageInput.value = '';
+            }
+            
+            // Function to show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                setTimeout(function() {
+                    errorMessage.style.opacity = '1';
+                }, 10);
+                setTimeout(function() {
+                    errorMessage.style.opacity = '0';
+                    setTimeout(function() {
+                        errorMessage.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html> 

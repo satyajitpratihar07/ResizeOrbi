@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Cleaner | Resize_Orbi</title>
+       <link rel="shortcut icon" href="fg.png">
+    <div class="logo-box">
+    <img src="s1.png" alt="Logo" class="site-logo">
+</div>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        .cleaner-options {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #f5f7fa;
+            border-radius: 8px;
+        }
+        
+        .option-group {
+            margin-bottom: 1rem;
+        }
+        
+        .option-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .slider-container {
+            margin: 0.5rem 0;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .enhancement-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .preview-box {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        .preview-box img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .preview-box p {
+            margin: 0.5rem 0 0;
+            font-size: 0.9rem;
+        }
+        
+        .enhancement-checkbox {
+            display: flex;
+            align-items: center;
+        }
+        
+        .enhancement-checkbox input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo-r.svg" alt="Resize_Orbi Logo" class="logo-img">
+                <h1>Resize_Orbi</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <span style="color: #fb1616;"><h>Home</h></span>
+                </a></li>
+                <li><a href="index.html#about">
+                    <span style="color: #fcfcfc;"><h>About</h></span>
+                </a></li>
+                <li><a href="index.html#contact">
+                    <span style="color: #15ea12;"><h>Developed By</h></span>
+                </a></li>
+                <li class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider">
+                            <div class="icons">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </div>
+                        </div>
+                    </label>
+                    <span class="theme-label">Light/Dark</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="converter-container">
+            <h1>Photo Cleaner & Enhancer</h1>
+            <p>Optimize and enhance your images for perfect results</p>
+            
+            <div class="upload-container">
+                <i class="fas fa-magic"></i>
+                <h3>Upload Image</h3>
+                <p>Drag & drop your file here or click to browse</p>
+                <p class="file-type-hint">Accepted formats: JPG, PNG, GIF, WEBP</p>
+                <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.gif,.webp">
+            </div>
+            
+            <div class="file-info">
+                <p>Selected file: <span id="file-name"></span> (<span id="file-size"></span>)</p>
+                
+                <div class="cleaner-options">
+                    <h3>Enhancement Settings</h3>
+                    
+                    <div class="option-group">
+                        <label for="brightness">Brightness:</label>
+                        <div class="slider-container">
+                            <input type="range" id="brightness" min="-100" max="100" value="0" class="quality-slider">
+                            <div class="slider-labels">
+                                <span>Darker</span>
+                                <span>Brighter</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="contrast">Contrast:</label>
+                        <div class="slider-container">
+                            <input type="range" id="contrast" min="-100" max="100" value="0" class="quality-slider">
+                            <div class="slider-labels">
+                                <span>Less</span>
+                                <span>More</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="saturation">Saturation:</label>
+                        <div class="slider-container">
+                            <input type="range" id="saturation" min="-100" max="100" value="0" class="quality-slider">
+                            <div class="slider-labels">
+                                <span>Less</span>
+                                <span>More</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="sharpness">Sharpness:</label>
+                        <div class="slider-container">
+                            <input type="range" id="sharpness" min="0" max="100" value="0" class="quality-slider">
+                            <div class="slider-labels">
+                                <span>Soft</span>
+                                <span>Sharp</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <h4>Auto Enhancements:</h4>
+                        <div class="enhancement-checkbox">
+                            <input type="checkbox" id="auto-enhance">
+                            <label for="auto-enhance">Auto Color Correction</label>
+                        </div>
+                        
+                        <div class="enhancement-checkbox">
+                            <input type="checkbox" id="noise-reduction">
+                            <label for="noise-reduction">Noise Reduction</label>
+                        </div>
+                        
+                        <div class="enhancement-checkbox">
+                            <input type="checkbox" id="remove-background">
+                            <label for="remove-background">Remove Background</label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="output-format">Output Format:</label>
+                        <select id="output-format" class="form-control">
+                            <option value="jpg">JPG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                
+                <button id="convert-btn" class="convert-btn" disabled>Enhance Image</button>
+                
+                <a href="#" id="download-btn" class="download-btn">Download Enhanced Image</a>
+                
+                <p class="error-message" id="error-message"></p>
+            </div>
+            
+            <div class="conversion-info">
+                <h3>About Photo Cleaner</h3>
+                <p>Our photo cleaner and enhancer uses advanced algorithms to improve your images. Benefits include:</p>
+                <ul>
+                    <li>Automatic color correction and enhancement</li>
+                    <li>Noise reduction for cleaner images</li>
+                    <li>Background removal for product photos</li>
+                    <li>Precise control over brightness, contrast, saturation, and sharpness</li>
+                </ul>
+                <p>Perfect for preparing photos for social media, e-commerce, or personal use with just a few clicks.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>
+                  <span style="color: #d84d4d;"><h>Resize_Orbi</h></span>
+                </h3>
+                <p>Your one-stop solution for all file conversion needs</p>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <span style="color: #d84d4d;"><h1>Quick Acton</h1></span>
+                </h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Developd By</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3><span style="color: #d84d4d;"><h>Contact With Developer</h></span>
+
+                </h3>
+                <p>Email:satyajitpratihar26@gmail.com</p>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Resize_Orbi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Additional JavaScript specific to the photo cleaner page
+        document.addEventListener('DOMContentLoaded', function() {
+            const brightnessSlider = document.getElementById('brightness');
+            const contrastSlider = document.getElementById('contrast');
+            const saturationSlider = document.getElementById('saturation');
+            const sharpnessSlider = document.getElementById('sharpness');
+            const autoEnhance = document.getElementById('auto-enhance');
+            const noiseReduction = document.getElementById('noise-reduction');
+            const removeBackground = document.getElementById('remove-background');
+            
+            // Add event listeners for sliders and checkboxes
+            // In a real implementation, these would apply the effects to a preview image
+        });
+    </script>
+</body>
+</html> 

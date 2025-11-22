@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo & Video Compression | Resize_Orbi</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        .compression-options {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #576780;
+            border-radius: 8px;
+        }
+        
+        .option-group {
+            margin-bottom: 1rem;
+        }
+        
+        .option-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .quality-slider {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        
+        .quality-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+           <div class="logo">
+                <img src="logo-r.svg" alt="Resize_Orbi Logo" class="logo-img">
+                <h1>Resize_Orbi</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <span style="color: #fb1616;"><h>Home</h></span>
+                </a></li>
+                <li><a href="index.html#about">
+                    <span style="color: #fcfcfc;"><h>About</h></span>
+                </a></li>
+                <li><a href="index.html#contact">
+                    <span style="color: #15ea12;"><h>Developed By</h></span>
+                </a></li>
+                <li class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider">
+                            <div class="icons">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </div>
+                        </div>
+                    </label>
+                    <span class="theme-label">Light/Dark</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="converter-container">
+            <h1>Photo & Video Compression</h1>
+            <p>Reduce file size while maintaining quality for easier sharing and storage.</p>
+            
+            <div class="upload-container">
+                <i class="fas fa-compress-alt"></i>
+                <h3>Upload Photo or Video</h3>
+                <p>Drag & drop your file here or click to browse</p>
+                <p class="file-type-hint">Accepted formats: JPG, PNG, GIF, MP4, MOV, AVI</p>
+                <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.gif,.mp4,.mov,.avi">
+            </div>
+            
+            <div class="file-info">
+                <p>Selected file: <span id="file-name"></span> (<span id="file-size"></span>)</p>
+                
+                <div class="compression-options">
+                    <h3>Compression Settings</h3>
+                    
+                    <div class="option-group">
+                        <label for="quality-slider">Quality Level:</label>
+                        <input type="range" id="quality-slider" class="quality-slider" min="1" max="100" value="80">
+                        <div class="quality-labels">
+                            <span>Lower Quality</span>
+                            <span>Higher Quality</span>
+                        </div>
+                        <p>Current: <span id="quality-value">80%</span></p>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="max-dimension">Max Dimension (for images):</label>
+                        <select id="max-dimension" class="form-control">
+                            <option value="original">Original Size</option>
+                            <option value="3840">4K (3840px)</option>
+                            <option value="1920">Full HD (1920px)</option>
+                            <option value="1280">HD (1280px)</option>
+                            <option value="800">Medium (800px)</option>
+                            <option value="500">Small (500px)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                
+                <button id="convert-btn" class="convert-btn" disabled>Compress File</button>
+                
+                <a href="#" id="download-btn" class="download-btn">Download Compressed File</a>
+                
+                <p class="error-message" id="error-message"></p>
+            </div>
+            
+            <div class="conversion-info">
+                <h3>About Photo & Video Compression</h3>
+                <p>Our compression tool allows you to reduce the file size of your photos and videos without significant quality loss. Benefits include:</p>
+                <ul>
+                    <li>Faster uploads to social media and messaging apps</li>
+                    <li>Reduced storage space usage on your devices</li>
+                    <li>Lower bandwidth consumption when sharing files</li>
+                    <li>Ability to send larger files via email</li>
+                </ul>
+                <p>Our intelligent compression algorithms maintain the best possible quality while achieving optimal file size reduction.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>
+                  <span style="color: #d84d4d;"><h>Resize_Orbi</h></span>
+                </h3>
+                <p>Your one-stop solution for all file conversion needs</p>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <span style="color: #d84d4d;"><h1>Quick Acton</h1></span>
+                </h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Developd By</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3><span style="color: #d84d4d;"><h>Contact With Developer</h></span>
+
+                </h3>
+                <p>Email:satyajitpratihar26@gmail.com</p>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Resize_Orbi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Additional JavaScript specific to the compression page
+        document.addEventListener('DOMContentLoaded', function() {
+            const qualitySlider = document.getElementById('quality-slider');
+            const qualityValue = document.getElementById('quality-value');
+            
+            if (qualitySlider && qualityValue) {
+                qualitySlider.addEventListener('input', function() {
+                    qualityValue.textContent = this.value + '%';
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

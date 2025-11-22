@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPG to PDF Converter | Resize_Orbi</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+       
+        :root {
+            --primary-color: #9932cc;
+            --secondary-color: #ff8c00;
+            --text-color: #333;
+            --bg-color: #e8e8e8;
+            --card-bg: #f5f7fa;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --header-bg: #211f1f;
+            --footer-bg: #f8f9fa;
+            --input-bg: #fff;
+        }
+
+      
+        [data-theme="dark"] {
+            --primary-color: #bb86fc;
+            --secondary-color: #ffab40;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow-color: rgba(0,0,0,0.3);
+            --header-bg: #1e1e1e;
+            --footer-bg: #1e1e1e;
+            --input-bg: #2d2d2d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        header, footer {
+            background-color: var(--header-bg);
+            border-color: var(--border-color);
+        }
+
+        footer {
+            background-color: var(--footer-bg);
+        }
+
+       
+        .theme-switch-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 0 3px rgba(0,0,0,0.3);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .slider .icons {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            color: white;
+        }
+
+        .theme-label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .upload-container {
+            position: relative;
+            border: 3px dashed var(--primary-color);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(153, 50, 204, 0.08);
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .upload-container:hover {
+            background-color: rgba(153, 50, 204, 0.15);
+            border-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .upload-container.dragover {
+            background-color: rgba(153, 50, 204, 0.25);
+            border-color: #8a2be2;
+            transform: scale(1.03);
+        }
+
+        .upload-container i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .file-info {
+            display: none;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+
+        .convert-btn, .download-btn, .reset-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: #8a2be2;
+            transform: translateY(-2px);
+        }
+
+        .convert-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .download-btn {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        #image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .image-thumbnail {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: white;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            width: 200px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .image-thumbnail:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .image-thumbnail img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .image-thumbnail p {
+            margin: 0.5rem 0 0 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-image:hover {
+            background-color: #dc3545;
+        }
+
+        .settings-section {
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .settings-section h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .settings-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .settings-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        select, input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            width: 100%;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .checkbox-group input {
+            margin-right: 8px;
+        }
+
+        .add-more-images {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .add-more-images:hover {
+            background-color: #8a2be2;
+        }
+
+        .drag-handle {
+            cursor: move;
+            margin-right: 8px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+             <div class="logo">
+                <img src="logo-r.svg" alt="Resize_Orbi Logo" class="logo-img">
+                <h1>Resize_Orbi</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <span style="color: #fb1616;"><h>Home</h></span>
+                </a></li>
+                <li><a href="index.html#about">
+                    <span style="color: #fcfcfc;"><h>About</h></span>
+                </a></li>
+                <li><a href="index.html#contact">
+                    <span style="color: #15ea12;"><h>Developed By</h></span>
+                </a></li>
+                <li class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider">
+                            <div class="icons">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </div>
+                        </div>
+                    </label>
+                    <span class="theme-label">Light/Dark</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="converter-container">
+            <h1>JPG to PDF Converter</h1>
+            <p>Convert your JPG images to PDF documents quickly and easily.</p>
+            
+            <div class="upload-container">
+                <i class="fas fa-file-image"></i>
+                <h3>Upload Images</h3>
+                <p>Drag & drop your files here or click to browse</p>
+                <p class="file-type-hint">Accepted formats: JPG, JPEG, PNG</p>
+                <input type="file" id="file-input" accept=".jpg,.jpeg,.png" multiple>
+            </div>
+            
+            <div class="file-info">
+                <p><span id="file-count">0</span> images selected</p>
+                
+                <div class="settings-section">
+                    <h3>PDF Settings</h3>
+                    <div class="settings-row">
+                        <div class="settings-group">
+                            <label for="page-size">Page Size:</label>
+                            <select id="page-size">
+                                <option value="a4">A4</option>
+                                <option value="letter">Letter</option>
+                                <option value="legal">Legal</option>
+                                <option value="tabloid">Tabloid</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="page-orientation">Orientation:</label>
+                            <select id="page-orientation">
+                                <option value="portrait">Portrait</option>
+                                <option value="landscape">Landscape</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <div class="settings-group">
+                            <label for="image-quality">Image Quality:</label>
+                            <select id="image-quality">
+                                <option value="high">High</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="margin">Margin (mm):</label>
+                            <input type="number" id="margin" min="0" max="50" value="10">
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="fit-to-page" checked>
+                        <label for="fit-to-page">Fit image to page</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="one-image-per-page" checked>
+                        <label for="one-image-per-page">One image per page</label>
+                    </div>
+                </div>
+                
+                <h3>Selected Images <small>(drag to reorder)</small></h3>
+                <div id="image-preview"></div>
+                
+                <button class="add-more-images" id="add-more-images">+ Add More Images</button>
+                
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="convert-btn" class="convert-btn">Convert to PDF</button>
+                    <button id="reset-btn" class="reset-btn">Clear & Upload New</button>
+                </div>
+                
+                <a href="#" id="download-btn" class="download-btn">Download PDF</a>
+                
+                <p class="error-message" id="error-message"></p>
+            </div>
+            
+            <div class="conversion-info">
+                <h3>About JPG to PDF Conversion</h3>
+                <p>Our JPG to PDF converter allows you to create PDF documents from your image files. This is useful when you need to:</p>
+                <ul>
+                    <li>Create a document from scanned images</li>
+                    <li>Combine multiple photos or screenshots into a single PDF</li>
+                    <li>Convert image-based content to a more portable document format</li>
+                    <li>Create print-ready documents from images</li>
+                </ul>
+                <p>The conversion process preserves the quality of your original images, and you can customize the PDF layout to suit your needs.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>
+                  <span style="color: #d84d4d;"><h>Resize_Orbi</h></span>
+                </h3>
+                <p>Your one-stop solution for all file conversion needs</p>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <span style="color: #d84d4d;"><h1>Quick Acton</h1></span>
+                </h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Developd By</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3><span style="color: #d84d4d;"><h>Contact With Developer</h></span>
+
+                </h3>
+                <p>Email:satyajitpratihar26@gmail.com</p>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Resize_Orbi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+         
+            const toggleSwitch = document.querySelector('#checkbox');
+            const currentTheme = localStorage.getItem('theme');
+            
+           
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                if (currentTheme === 'dark') {
+                    toggleSwitch.checked = true;
+                }
+            }
+            
+           
+            function switchTheme(e) {
+                if (e.target.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }    
+            }
+            
+          
+            toggleSwitch.addEventListener('change', switchTheme, false);
+            
+           
+            const fileInput = document.getElementById('file-input');
+            const addMoreImages = document.getElementById('add-more-images');
+            const uploadContainer = document.querySelector('.upload-container');
+            const fileInfo = document.querySelector('.file-info');
+            const fileCount = document.getElementById('file-count');
+            const convertBtn = document.getElementById('convert-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const errorMessage = document.getElementById('error-message');
+            const progressBar = document.querySelector('.progress');
+            const imagePreview = document.getElementById('image-preview');
+            const pageSize = document.getElementById('page-size');
+            const pageOrientation = document.getElementById('page-orientation');
+            const imageQuality = document.getElementById('image-quality');
+            const margin = document.getElementById('margin');
+            const fitToPage = document.getElementById('fit-to-page');
+            const oneImagePerPage = document.getElementById('one-image-per-page');
+            
+            
+            let selectedFiles = [];
+            let downloadUrl = null;
+            
+           
+            new Sortable(imagePreview, {
+                animation: 150,
+                handle: '.drag-handle',
+                ghostClass: 'sortable-ghost'
+            });
+            
+         
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    handleFileSelection(e.target.files);
+                }
+            });
+            
+            
+            uploadContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            uploadContainer.addEventListener('dragleave', function() {
+                this.classList.remove('dragover');
+            });
+            
+            uploadContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelection(e.dataTransfer.files);
+                }
+            });
+            
+            
+            uploadContainer.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+          
+            addMoreImages.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+           
+            resetBtn.addEventListener('click', function() {
+                resetForm();
+            });
+            
+          
+            convertBtn.addEventListener('click', function() {
+                if (selectedFiles.length === 0) {
+                    showError('Please select at least one image file.');
+                    return;
+                }
+                
+                convertImagesToPdf();
+            });
+            
+           
+            function handleFileSelection(files) {
+              
+                const imageFiles = Array.from(files).filter(file => 
+                    file.type === 'image/jpeg' || 
+                    file.type === 'image/jpg' || 
+                    file.type === 'image/png'
+                );
+                
+                if (imageFiles.length === 0) {
+                    showError('Please select valid image files (JPG, JPEG, PNG).');
+                    return;
+                }
+                
+                
+                for (const file of imageFiles) {
+                    selectedFiles.push(file);
+                }
+                
+               
+                fileCount.textContent = selectedFiles.length;
+                
+               
+                fileInfo.style.display = 'block';
+                
+                
+                downloadBtn.style.display = 'none';
+                
+                
+                updateImagePreviews();
+            }
+            
+           
+            function updateImagePreviews() {
+                
+                imagePreview.innerHTML = '';
+                
+                
+                selectedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const thumbnail = document.createElement('div');
+                        thumbnail.className = 'image-thumbnail';
+                        thumbnail.dataset.index = index;
+                        
+                        const dragHandle = document.createElement('div');
+                        dragHandle.className = 'drag-handle';
+                        dragHandle.innerHTML = '<i class="fas fa-grip-lines"></i>';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        
+                        const name = document.createElement('p');
+                        name.textContent = file.name;
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.addEventListener('click', function() {
+                            selectedFiles.splice(index, 1);
+                            fileCount.textContent = selectedFiles.length;
+                            updateImagePreviews();
+                        });
+                        
+                        thumbnail.appendChild(dragHandle);
+                        thumbnail.appendChild(img);
+                        thumbnail.appendChild(name);
+                        thumbnail.appendChild(removeBtn);
+                        
+                        imagePreview.appendChild(thumbnail);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+           
+            function convertImagesToPdf() {
+                if (selectedFiles.length === 0) {
+                    showError('No images selected.');
+                    return;
+                }
+                
+               
+                progressBar.parentElement.style.display = 'block';
+                progressBar.style.width = '0%';
+                
+               
+                const size = pageSize.value;
+                const orientation = pageOrientation.value;
+                const quality = imageQuality.value;
+                const marginValue = parseInt(margin.value);
+                const fitImage = fitToPage.checked;
+                const singleImagePerPage = oneImagePerPage.checked;
+                
+               
+                let pageWidth, pageHeight;
+                switch (size) {
+                    case 'a4':
+                        pageWidth = 210;
+                        pageHeight = 297;
+                        break;
+                    case 'letter':
+                        pageWidth = 216;
+                        pageHeight = 279;
+                        break;
+                    case 'legal':
+                        pageWidth = 216;
+                        pageHeight = 356;
+                        break;
+                    case 'tabloid':
+                        pageWidth = 279;
+                        pageHeight = 432;
+                        break;
+                }
+                
+             
+                if (orientation === 'landscape') {
+                    [pageWidth, pageHeight] = [pageHeight, pageWidth];
+                }
+                
+                
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: 'mm',
+                    format: size
+                });
+                
+                
+                let processedImages = 0;
+                
+               
+                processNextImage(0);
+                
+                function processNextImage(index) {
+                    if (index >= selectedFiles.length) {
+                     
+                        finalizePdf();
+                        return;
+                    }
+                    
+                    const file = selectedFiles[index];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.src = e.target.result;
+                        
+                        img.onload = function() {
+                           
+                            if (index > 0 && singleImagePerPage) {
+                                pdf.addPage();
+                            }
+                            
+                            
+                            const availableWidth = pageWidth - (marginValue * 2);
+                            const availableHeight = pageHeight - (marginValue * 2);
+                            
+                            let imgWidth = img.width;
+                            let imgHeight = img.height;
+                            
+                            if (fitImage) {
+                              
+                                const scaleX = availableWidth / imgWidth;
+                                const scaleY = availableHeight / imgHeight;
+                                const scale = Math.min(scaleX, scaleY);
+                                
+                                imgWidth = imgWidth * scale;
+                                imgHeight = imgHeight * scale;
+                            }
+                            
+                            
+                            const x = marginValue + (availableWidth - imgWidth) / 2;
+                            const y = marginValue + (availableHeight - imgHeight) / 2;
+                            
+                           
+                            pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+                            
+                          
+                            processedImages++;
+                            const progress = (processedImages / selectedFiles.length) * 100;
+                            progressBar.style.width = progress + '%';
+                            
+                           
+                            processNextImage(index + 1);
+                        };
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+                
+                function finalizePdf() {
+                    
+                    if (downloadUrl) {
+                        URL.revokeObjectURL(downloadUrl);
+                    }
+                    
+                    const pdfBlob = pdf.output('blob');
+                    downloadUrl = URL.createObjectURL(pdfBlob);
+                    
+                   
+                    downloadBtn.href = downloadUrl;
+                    downloadBtn.download = 'converted_images.pdf';
+                    downloadBtn.style.display = 'inline-block';
+                    
+                    
+                    downloadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            
+            
+            function resetForm() {
+                
+                fileInput.value = '';
+                
+             
+                fileInfo.style.display = 'none';
+                
+                
+                selectedFiles = [];
+                fileCount.textContent = '0';
+                
+              
+                imagePreview.innerHTML = '';
+                
+               
+                progressBar.parentElement.style.display = 'none';
+                progressBar.style.width = '0%';
+                
+                
+                downloadBtn.style.display = 'none';
+                
+                if (downloadUrl) {
+                    URL.revokeObjectURL(downloadUrl);
+                    downloadUrl = null;
+                }
+                
+                
+                errorMessage.style.display = 'none';
+                errorMessage.textContent = '';
+                
+               
+                pageSize.value = 'a4';
+                pageOrientation.value = 'portrait';
+                imageQuality.value = 'medium';
+                margin.value = '10';
+                fitToPage.checked = true;
+                oneImagePerPage.checked = true;
+            }
+            
+          
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                setTimeout(function() {
+                    errorMessage.style.opacity = '1';
+                }, 10);
+                setTimeout(function() {
+                    errorMessage.style.opacity = '0';
+                    setTimeout(function() {
+                        errorMessage.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html> 

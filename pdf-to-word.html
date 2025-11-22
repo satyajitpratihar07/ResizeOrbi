@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Word Converter | Resize_Orbi</title>
+       <link rel="shortcut icon" href="fg.png">
+    <div class="logo-box">
+    <img src="s1.png" alt="Logo" class="site-logo">
+</div>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.1.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        
+        :root {
+            --primary-color: #9932cc;
+            --secondary-color: #ff8c00;
+            --text-color: #333;
+            --bg-color: #e8e8e8;
+            --card-bg: #f5f7fa;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --header-bg: #1c1919;
+            --footer-bg: #f8f9fa;
+            --input-bg: #fff;
+        }
+
+        
+        [data-theme="dark"] {
+            --primary-color: #bb86fc;
+            --secondary-color: #ffab40;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow-color: rgba(0,0,0,0.3);
+            --header-bg: #1e1e1e;
+            --footer-bg: #1e1e1e;
+            --input-bg: #2d2d2d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        header, footer {
+            background-color: var(--header-bg);
+            border-color: var(--border-color);
+        }
+
+        footer {
+            background-color: var(--footer-bg);
+        }
+
+        /* Toggle switch styles */
+        .theme-switch-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 0 3px rgba(0,0,0,0.3);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .slider .icons {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            color: white;
+        }
+        
+        .theme-label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .upload-container {
+            position: relative;
+            border: 3px dashed var(--primary-color);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(153, 50, 204, 0.08);
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .upload-container:hover {
+            background-color: rgba(153, 50, 204, 0.15);
+            border-color: #8a2be2;
+            transform: translateY(-3px);
+        }
+
+        .upload-container.dragover {
+            background-color: rgba(153, 50, 204, 0.25);
+            border-color: #8a2be2;
+            transform: scale(1.03);
+        }
+
+        .upload-container i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .file-info {
+            display: none;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+
+        .convert-btn, .download-btn, .reset-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .convert-btn:hover {
+            background-color: #8a2be2;
+            transform: translateY(-2px);
+        }
+
+        .convert-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .download-btn {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .settings-section {
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .settings-section h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .settings-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .settings-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        select, input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            width: 100%;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .checkbox-group input {
+            margin-right: 8px;
+        }
+
+        #pdf-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .pdf-page {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: white;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            width: 200px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .pdf-page:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .pdf-page img, .pdf-page canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .pdf-page p {
+            margin: 0.5rem 0 0 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .page-selection {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .page-selection input[type="text"] {
+            width: 100px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .conversion-note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: rgba(255, 193, 7, 0.2);
+            border-radius: 4px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .conversion-note h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo-r.svg" alt="Resize_Orbi Logo" class="logo-img">
+                <h1>Resize_Orbi</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <span style="color: #fb1616;"><h>Home</h></span>
+                </a></li>
+                <li><a href="index.html#about">
+                    <span style="color: #fcfcfc;"><h>About</h></span>
+                </a></li>
+                <li><a href="index.html#contact">
+                    <span style="color: #15ea12;"><h>Developed By</h></span>
+                </a></li>
+                <li class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider">
+                            <div class="icons">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </div>
+                        </div>
+                    </label>
+                    <span class="theme-label">Light/Dark</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="converter-container">
+            <h1>PDF to Word Converter</h1>
+            <p>Convert your PDF documents to editable Word (.docx) format quickly and easily.</p>
+            
+            <div class="upload-container">
+                <i class="fas fa-file-pdf"></i>
+                <h3>Upload PDF File</h3>
+                <p>Drag & drop your file here or click to browse</p>
+                <p class="file-type-hint">Accepted format: PDF</p>
+                <input type="file" id="file-input" accept=".pdf">
+            </div>
+            
+            <div class="file-info">
+                <h3>PDF Information</h3>
+                <p>Filename: <span id="file-name"></span></p>
+                <p>Total Pages: <span id="page-count">0</span></p>
+                
+                <div class="settings-section">
+                    <h3>Conversion Settings</h3>
+                    <div class="settings-row">
+                        <div class="settings-group">
+                            <label for="output-format">Output Format:</label>
+                            <select id="output-format">
+                                <option value="docx" selected>DOCX</option>
+                                <option value="doc">DOC</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="text-recognition">Text Recognition Quality:</label>
+                            <select id="text-recognition">
+                                <option value="high">High (Slower)</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="fast">Fast (Lower quality)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="page-selection">
+                        <label for="page-range-type">Pages to Convert:</label>
+                        <select id="page-range-type">
+                            <option value="all">All Pages</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <input type="text" id="page-range" placeholder="e.g., 1-3, 5, 7-9" disabled>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="extract-images" checked>
+                        <label for="extract-images">Include images</label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="maintain-layout" checked>
+                        <label for="maintain-layout">Attempt to maintain original layout</label>
+                    </div>
+                </div>
+                
+                <div class="conversion-note">
+                    <h4>Note About PDF to Word Conversion</h4>
+                    <p>Converting PDF to Word is a complex process that attempts to recreate the document's content in an editable format. Results may vary depending on the PDF's complexity, formatting, and whether it contains actual text or scanned images.</p>
+                    <p>Best results are achieved with PDFs that contain actual text rather than scanned documents.</p>
+                </div>
+                
+                <h3>PDF Preview</h3>
+                <div id="pdf-preview"></div>
+                
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="convert-btn" class="convert-btn">Convert to Word</button>
+                    <button id="reset-btn" class="reset-btn">Clear & Upload New</button>
+                </div>
+                
+                <a href="#" id="download-btn" class="download-btn">Download Word Document</a>
+                
+                <p class="error-message" id="error-message"></p>
+            </div>
+            
+            <div class="conversion-info">
+                <h3>About PDF to Word Conversion</h3>
+                <p>Our PDF to Word converter extracts text, images, and formatting from PDF documents to create editable Word files. This is useful when you need to:</p>
+                <ul>
+                    <li>Edit content in PDF documents</li>
+                    <li>Extract text from PDF files for use in other applications</li>
+                    <li>Update or modify information in PDF documents</li>
+                    <li>Convert a PDF document into an editable format for collaboration</li>
+                </ul>
+                <p>The conversion process preserves as much of the original formatting as possible, though complex layouts may require some adjustments after conversion.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>
+                  <span style="color: #d84d4d;"><h>Resize_Orbi</h></span>
+                </h3>
+                <p>Your one-stop solution for all file conversion needs</p>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <span style="color: #d84d4d;"><h1>Quick Acton</h1></span>
+                </h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Developd By</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3><span style="color: #d84d4d;"><h>Contact With Developer</h></span>
+
+                </h3>
+                <p>Email:satyajitpratihar26@gmail.com</p>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Resize_Orbi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configure PDF.js
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+            
+            // Theme switcher
+            const toggleSwitch = document.querySelector('#checkbox');
+            const currentTheme = localStorage.getItem('theme');
+            
+            // Check if theme is already stored
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                if (currentTheme === 'dark') {
+                    toggleSwitch.checked = true;
+                }
+            }
+            
+            // Handle theme switch
+            function switchTheme(e) {
+                if (e.target.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }    
+            }
+            
+            // Add event listener
+            toggleSwitch.addEventListener('change', switchTheme, false);
+            
+            // PDF to Word Converter functionality
+            const fileInput = document.getElementById('file-input');
+            const uploadContainer = document.querySelector('.upload-container');
+            const fileInfo = document.querySelector('.file-info');
+            const fileName = document.getElementById('file-name');
+            const pageCount = document.getElementById('page-count');
+            const convertBtn = document.getElementById('convert-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const errorMessage = document.getElementById('error-message');
+            const progressBar = document.querySelector('.progress');
+            const pdfPreview = document.getElementById('pdf-preview');
+            const outputFormat = document.getElementById('output-format');
+            const textRecognition = document.getElementById('text-recognition');
+            const pageRangeType = document.getElementById('page-range-type');
+            const pageRange = document.getElementById('page-range');
+            const extractImages = document.getElementById('extract-images');
+            const maintainLayout = document.getElementById('maintain-layout');
+            
+            // Variables to store PDF data
+            let pdfFile = null;
+            let pdfDocument = null;
+            let pdfPages = [];
+            let pdfText = [];
+            let downloadUrl = null;
+            
+            // Handle page range type change
+            pageRangeType.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    pageRange.disabled = false;
+                } else {
+                    pageRange.disabled = true;
+                    pageRange.value = '';
+                }
+            });
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+            
+            // Drag and drop handlers
+            uploadContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            uploadContainer.addEventListener('dragleave', function() {
+                this.classList.remove('dragover');
+            });
+            
+            uploadContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelection(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // Click to select file
+            uploadContainer.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // Handle reset button
+            resetBtn.addEventListener('click', function() {
+                resetForm();
+            });
+            
+            // Handle convert button
+            convertBtn.addEventListener('click', function() {
+                if (!pdfDocument) {
+                    showError('Please select a PDF file.');
+                    return;
+                }
+                
+                convertPdfToWord();
+            });
+            
+            // Function to handle file selection
+            function handleFileSelection(file) {
+                // Check if it's a PDF
+                if (file.type !== 'application/pdf') {
+                    showError('Please select a valid PDF file.');
+                    return;
+                }
+                
+                // Store the file
+                pdfFile = file;
+                fileName.textContent = file.name;
+                
+                // Show file info section
+                fileInfo.style.display = 'block';
+                
+                // Hide download button
+                downloadBtn.style.display = 'none';
+                
+                // Load the PDF
+                loadPdf(file);
+            }
+            
+            // Function to load the PDF
+            function loadPdf(file) {
+                const fileReader = new FileReader();
+                
+                fileReader.onload = function() {
+                    const typedArray = new Uint8Array(this.result);
+                    
+                    // Show progress bar
+                    progressBar.parentElement.style.display = 'block';
+                    progressBar.style.width = '30%';
+                    
+                    // Load the PDF document
+                    pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+                        pdfDocument = pdf;
+                        pageCount.textContent = pdf.numPages;
+                        
+                        // Clear previous data
+                        pdfPreview.innerHTML = '';
+                        pdfPages = [];
+                        pdfText = [];
+                        
+                        // Update progress
+                        progressBar.style.width = '50%';
+                        
+                        // Get the first 3 pages for preview
+                        const maxPreviewPages = Math.min(3, pdf.numPages);
+                        const pagesPromises = [];
+                        
+                        for (let i = 1; i <= maxPreviewPages; i++) {
+                            pagesPromises.push(renderPage(i));
+                        }
+                        
+                        // Also extract text from all pages for conversion
+                        const textPromises = [];
+                        
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            textPromises.push(extractTextFromPage(i));
+                        }
+                        
+                        // Process all promises
+                        Promise.all([...pagesPromises, ...textPromises])
+                            .then(() => {
+                                // Update progress and hide progress bar
+                                progressBar.style.width = '100%';
+                                setTimeout(function() {
+                                    progressBar.parentElement.style.display = 'none';
+                                    progressBar.style.width = '0%';
+                                }, 500);
+                                
+                                // Enable convert button
+                                convertBtn.disabled = false;
+                            })
+                            .catch(error => {
+                                showError('Error processing PDF: ' + error.message);
+                                console.error(error);
+                            });
+                        
+                    }).catch(function(error) {
+                        showError('Error loading PDF: ' + error.message);
+                        console.error(error);
+                        progressBar.parentElement.style.display = 'none';
+                    });
+                };
+                
+                fileReader.readAsArrayBuffer(file);
+            }
+            
+            // Function to render a page preview
+            function renderPage(pageNumber) {
+                return pdfDocument.getPage(pageNumber).then(function(page) {
+                    const scale = 0.5;
+                    const viewport = page.getViewport({ scale: scale });
+                    
+                    // Create a canvas for rendering
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    // Create page container
+                    const pageContainer = document.createElement('div');
+                    pageContainer.className = 'pdf-page';
+                    
+                    // Page label
+                    const pageLabel = document.createElement('p');
+                    pageLabel.textContent = `Page ${pageNumber}`;
+                    
+                    // Render the page
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    return page.render(renderContext).promise.then(function() {
+                        // Store the page data
+                        pdfPages.push({
+                            pageNumber: pageNumber,
+                            canvas: canvas
+                        });
+                        
+                        // Add to preview
+                        pageContainer.appendChild(canvas);
+                        pageContainer.appendChild(pageLabel);
+                        
+                        pdfPreview.appendChild(pageContainer);
+                    });
+                });
+            }
+            
+            // Function to extract text from a page
+            function extractTextFromPage(pageNumber) {
+                return pdfDocument.getPage(pageNumber).then(function(page) {
+                    return page.getTextContent().then(function(textContent) {
+                        // Process text items
+                        const textItems = textContent.items;
+                        let pageText = '';
+                        let lastY = null;
+                        
+                        // Combine text items into lines based on y-coordinate
+                        for (const item of textItems) {
+                            if (lastY !== item.transform[5] && pageText !== '') {
+                                pageText += '\n';
+                            }
+                            pageText += item.str;
+                            lastY = item.transform[5];
+                        }
+                        
+                        // Store the page text
+                        pdfText[pageNumber - 1] = pageText;
+                    });
+                });
+            }
+            
+            // Function to convert PDF to Word
+            function convertPdfToWord() {
+                if (!pdfDocument || pdfText.length === 0) {
+                    showError('PDF content not available for conversion.');
+                    return;
+                }
+                
+                // Show progress bar
+                progressBar.parentElement.style.display = 'block';
+                progressBar.style.width = '10%';
+                
+                // Disable convert button
+                convertBtn.disabled = true;
+                
+                // Get settings
+                const format = outputFormat.value;
+                const quality = textRecognition.value;
+                const includeImages = extractImages.checked;
+                const preserveLayout = maintainLayout.checked;
+                
+                // Get pages to convert
+                let pagesToConvert = [];
+                
+                if (pageRangeType.value === 'all') {
+                    // Convert all pages
+                    for (let i = 0; i < pdfText.length; i++) {
+                        pagesToConvert.push(i);
+                    }
+                } else {
+                    // Convert specific pages
+                    try {
+                        pagesToConvert = parsePageRange(pageRange.value, pdfDocument.numPages);
+                        // Convert to zero-based index
+                        pagesToConvert = pagesToConvert.map(p => p - 1);
+                    } catch (error) {
+                        showError('Invalid page range format. Please use format like "1-3, 5, 7-9".');
+                        progressBar.parentElement.style.display = 'none';
+                        convertBtn.disabled = false;
+                        return;
+                    }
+                }
+                
+                // Update progress
+                progressBar.style.width = '30%';
+                
+                // Create Word document using docx.js
+                const { Document, Paragraph, TextRun, Packer, AlignmentType, HeadingLevel, ImageRun } = docx;
+                
+                // Create paragraphs from extracted text
+                const paragraphs = [];
+                
+                // Process each selected page
+                for (const pageIndex of pagesToConvert) {
+                    if (pageIndex >= 0 && pageIndex < pdfText.length) {
+                        // Add page number as heading if multiple pages
+                        if (pagesToConvert.length > 1) {
+                            paragraphs.push(
+                                new Paragraph({
+                                    text: `Page ${pageIndex + 1}`,
+                                    heading: HeadingLevel.HEADING_2,
+                                    spacing: { after: 200 }
+                                })
+                            );
+                        }
+                        
+                        // Split the page text into lines
+                        const lines = pdfText[pageIndex].split('\n');
+                        
+                        // Process each line
+                        for (const line of lines) {
+                            if (line.trim() === '') continue;
+                            
+                            paragraphs.push(
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: line,
+                                            size: 24 // 12pt font
+                                        })
+                                    ],
+                                    spacing: { before: 100, after: 100 }
+                                })
+                            );
+                        }
+                        
+                        // Add page break if not the last page
+                        if (pageIndex !== pagesToConvert[pagesToConvert.length - 1]) {
+                            paragraphs.push(
+                                new Paragraph({
+                                    pageBreakBefore: true
+                                })
+                            );
+                        }
+                    }
+                }
+                
+                // Update progress
+                progressBar.style.width = '60%';
+                
+                // Create the document
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: paragraphs
+                    }]
+                });
+                
+                // Update progress
+                progressBar.style.width = '80%';
+                
+                // Generate Word file
+                Packer.toBlob(doc).then(blob => {
+                    // Create download URL
+                    if (downloadUrl) {
+                        URL.revokeObjectURL(downloadUrl);
+                    }
+                    
+                    downloadUrl = URL.createObjectURL(blob);
+                    
+                    // Update download button
+                    downloadBtn.href = downloadUrl;
+                    downloadBtn.download = fileName.textContent.replace('.pdf', format === 'docx' ? '.docx' : '.doc');
+                    downloadBtn.style.display = 'inline-block';
+                    
+                    // Update progress
+                    progressBar.style.width = '100%';
+                    
+                    // Hide progress bar after a delay
+                    setTimeout(function() {
+                        progressBar.parentElement.style.display = 'none';
+                        progressBar.style.width = '0%';
+                        
+                        // Enable convert button
+                        convertBtn.disabled = false;
+                        
+                        // Scroll to download button
+                        downloadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 500);
+                }).catch(error => {
+                    showError('Error generating Word document: ' + error.message);
+                    console.error(error);
+                    
+                    // Hide progress bar
+                    progressBar.parentElement.style.display = 'none';
+                    
+                    // Enable convert button
+                    convertBtn.disabled = false;
+                });
+            }
+            
+            // Function to parse page range string
+            function parsePageRange(rangeStr, maxPages) {
+                const result = [];
+                const parts = rangeStr.split(',');
+                
+                for (const part of parts) {
+                    const trimmedPart = part.trim();
+                    
+                    if (trimmedPart.includes('-')) {
+                        // Handle range like "1-5"
+                        const [start, end] = trimmedPart.split('-').map(num => parseInt(num.trim()));
+                        
+                        if (isNaN(start) || isNaN(end) || start > end || start < 1 || end > maxPages) {
+                            throw new Error('Invalid range format');
+                        }
+                        
+                        for (let i = start; i <= end; i++) {
+                            if (!result.includes(i)) {
+                                result.push(i);
+                            }
+                        }
+                    } else {
+                        // Handle single page like "7"
+                        const pageNum = parseInt(trimmedPart);
+                        
+                        if (isNaN(pageNum) || pageNum < 1 || pageNum > maxPages) {
+                            throw new Error('Invalid page number');
+                        }
+                        
+                        if (!result.includes(pageNum)) {
+                            result.push(pageNum);
+                        }
+                    }
+                }
+                
+                return result.sort((a, b) => a - b);
+            }
+            
+            // Function to reset the form
+            function resetForm() {
+                // Reset file input
+                fileInput.value = '';
+                
+                // Hide file info section
+                fileInfo.style.display = 'none';
+                
+                // Clear PDF document
+                pdfDocument = null;
+                pdfFile = null;
+                pdfPages = [];
+                pdfText = [];
+                
+                // Clear PDF preview
+                pdfPreview.innerHTML = '';
+                
+                // Hide progress bar
+                progressBar.parentElement.style.display = 'none';
+                progressBar.style.width = '0%';
+                
+                // Hide download button
+                downloadBtn.style.display = 'none';
+                
+                // Clean up URLs
+                if (downloadUrl) {
+                    URL.revokeObjectURL(downloadUrl);
+                    downloadUrl = null;
+                }
+                
+                // Clear error message
+                errorMessage.style.display = 'none';
+                errorMessage.textContent = '';
+                
+                // Reset settings to defaults
+                outputFormat.value = 'docx';
+                textRecognition.value = 'standard';
+                pageRangeType.value = 'all';
+                pageRange.value = '';
+                pageRange.disabled = true;
+                extractImages.checked = true;
+                maintainLayout.checked = true;
+            }
+            
+            // Function to show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                setTimeout(function() {
+                    errorMessage.style.opacity = '1';
+                }, 10);
+                setTimeout(function() {
+                    errorMessage.style.opacity = '0';
+                    setTimeout(function() {
+                        errorMessage.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html> 

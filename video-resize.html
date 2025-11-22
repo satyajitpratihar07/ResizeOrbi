@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Resize | Resize_Orbi</title>
+    <link rel="stylesheet" href="styles.css">
+       <link rel="shortcut icon" href="fg.png">
+    <div class="logo-box">
+    <img src="s1.png" alt="Logo" class="site-logo">
+</div>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        .resize-options {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #212527;
+            border-radius: 8px;
+        }
+        
+        .option-group {
+            margin-bottom: 1rem;
+        }
+        
+        .option-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .dimension-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .dimension-inputs input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #218915;
+            border-radius: 4px;
+        }
+        
+        .lock-aspect {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .lock-aspect input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo-r.svg" alt="Resize_Orbi Logo" class="logo-img">
+                <h1>Resize_Orbi</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">
+                    <span style="color: #fb1616;"><h>Home</h></span>
+                </a></li>
+                <li><a href="index.html#about">
+                    <span style="color: #fcfcfc;"><h>About</h></span>
+                </a></li>
+                <li><a href="index.html#contact">
+                    <span style="color: #15ea12;"><h>Developed By</h></span>
+                </a></li>
+                <li class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider">
+                            <div class="icons">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </div>
+                        </div>
+                    </label>
+                    <span class="theme-label">Light/Dark</span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="converter-container">
+            <h1>Video Resize Tool</h1>
+            <p>Resize your videos to exact dimensions while maintaining quality</p>
+            
+            <div class="upload-container">
+                <i class="fas fa-video"></i>
+                <h3>Upload Video</h3>
+                <p>Drag & drop your file here or click to browse</p>
+                <p class="file-type-hint">Accepted formats: MP4, MOV, AVI, WEBM</p>
+                <input type="file" id="file-input" accept=".mp4,.mov,.avi,.webm">
+            </div>
+            
+            <div class="file-info">
+                <p>Selected file: <span id="file-name"></span> (<span id="file-size"></span>)</p>
+                
+                <div class="resize-options">
+                    <h3>Resize Settings</h3>
+                    
+                    <div class="option-group">
+                        <label for="resize-method">Resize Method:</label>
+                        <select id="resize-method" class="form-control">
+                            <option value="exact">Exact Dimensions</option>
+                            <option value="percentage">Percentage</option>
+                            <option value="preset">Common Sizes</option>
+                        </select>
+                    </div>
+                    
+                    <div id="exact-dimensions" class="option-group">
+                        <label>Dimensions (pixels):</label>
+                        <div class="dimension-inputs">
+                            <input type="number" id="width" placeholder="Width" min="1" max="7680">
+                            <span>×</span>
+                            <input type="number" id="height" placeholder="Height" min="1" max="4320">
+                        </div>
+                        <div class="lock-aspect">
+                            <input type="checkbox" id="lock-aspect" checked>
+                            <label for="lock-aspect">Maintain aspect ratio</label>
+                        </div>
+                    </div>
+                    
+                    <div id="percentage-resize" class="option-group" style="display: none;">
+                        <label for="percentage">Resize by percentage:</label>
+                        <input type="range" id="percentage" min="1" max="200" value="50" class="quality-slider">
+                        <p>Scale: <span id="percentage-value">50%</span></p>
+                    </div>
+                    
+                    <div id="preset-sizes" class="option-group" style="display: none;">
+                        <label for="preset-select">Common sizes:</label>
+                        <select id="preset-select" class="form-control">
+                            <option value="instagram">Instagram Video (1080×1080)</option>
+                            <option value="youtube">YouTube (1920×1080)</option>
+                            <option value="tiktok">TikTok (1080×1920)</option>
+                            <option value="facebook">Facebook Video (1280×720)</option>
+                            <option value="hd">HD (1280×720)</option>
+                            <option value="fullhd">Full HD (1920×1080)</option>
+                            <option value="4k">4K UHD (3840×2160)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="quality-setting">Output Quality:</label>
+                        <select id="quality-setting" class="form-control">
+                            <option value="high">High (larger file)</option>
+                            <option value="medium" selected>Medium (balanced)</option>
+                            <option value="low">Low (smaller file)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="output-format">Output Format:</label>
+                        <select id="output-format" class="form-control">
+                            <option value="mp4">MP4</option>
+                            <option value="mov">MOV</option>
+                            <option value="webm">WebM</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                
+                <button id="convert-btn" class="convert-btn" disabled>Resize Video</button>
+                
+                <a href="#" id="download-btn" class="download-btn">Download Resized Video</a>
+                
+                <p class="error-message" id="error-message"></p>
+            </div>
+            
+            <div class="conversion-info">
+                <h3>About Video Resizing</h3>
+                <p>Our video resizing tool allows you to change the dimensions of your videos precisely while maintaining the best possible quality. Benefits include:</p>
+                <ul>
+                    <li>Resize videos for different social media platforms</li>
+                    <li>Change aspect ratio for different viewing formats</li>
+                    <li>Optimize video dimensions for specific devices</li>
+                    <li>Reduce video resolution for easier sharing</li>
+                </ul>
+                <p>You can choose to resize by exact dimensions, percentage scaling, or using common preset sizes while maintaining aspect ratio if desired.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>
+                  <span style="color: #d84d4d;"><h>Resize_Orbi</h></span>
+                </h3>
+                <p>Your one-stop solution for all file conversion needs</p>
+            </div>
+            <div class="footer-section">
+                <h3>
+                    <span style="color: #d84d4d;"><h1>Quick Acton</h1></span>
+                </h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Developd By</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3><span style="color: #d84d4d;"><h>Contact With Developer</h></span>
+
+                </h3>
+                <p>Email:satyajitpratihar26@gmail.com</p>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Resize_Orbi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Additional JavaScript specific to the video resize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const resizeMethod = document.getElementById('resize-method');
+            const exactDimensions = document.getElementById('exact-dimensions');
+            const percentageResize = document.getElementById('percentage-resize');
+            const presetSizes = document.getElementById('preset-sizes');
+            const percentageSlider = document.getElementById('percentage');
+            const percentageValue = document.getElementById('percentage-value');
+            const widthInput = document.getElementById('width');
+            const heightInput = document.getElementById('height');
+            const lockAspect = document.getElementById('lock-aspect');
+            const presetSelect = document.getElementById('preset-select');
+            
+            // Handle resize method change
+            if (resizeMethod) {
+                resizeMethod.addEventListener('change', function() {
+                    switch(this.value) {
+                        case 'exact':
+                            exactDimensions.style.display = 'block';
+                            percentageResize.style.display = 'none';
+                            presetSizes.style.display = 'none';
+                            break;
+                        case 'percentage':
+                            exactDimensions.style.display = 'none';
+                            percentageResize.style.display = 'block';
+                            presetSizes.style.display = 'none';
+                            break;
+                        case 'preset':
+                            exactDimensions.style.display = 'none';
+                            percentageResize.style.display = 'none';
+                            presetSizes.style.display = 'block';
+                            break;
+                    }
+                });
+            }
+            
+            // Handle percentage slider
+            if (percentageSlider && percentageValue) {
+                percentageSlider.addEventListener('input', function() {
+                    percentageValue.textContent = this.value + '%';
+                });
+            }
+            
+            // Store original aspect ratio
+            let aspectRatio = 16/9; // Default aspect ratio
+            let originalWidth = 1920;
+            let originalHeight = 1080;
+            
+            // Handle file selection to get dimensions (would require video metadata)
+            const fileInput = document.getElementById('file-input');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        // In a real application, you'd extract video dimensions here
+                        // For this demo, we'll use placeholder values
+                        widthInput.value = originalWidth;
+                        heightInput.value = originalHeight;
+                    }
+                });
+            }
+            
+            // Handle aspect ratio locking
+            if (widthInput && heightInput && lockAspect) {
+                widthInput.addEventListener('input', function() {
+                    if (lockAspect.checked) {
+                        heightInput.value = Math.round(widthInput.value / aspectRatio);
+                    }
+                });
+                
+                heightInput.addEventListener('input', function() {
+                    if (lockAspect.checked) {
+                        widthInput.value = Math.round(heightInput.value * aspectRatio);
+                    }
+                });
+            }
+            
+            // Handle preset selection
+            if (presetSelect) {
+                presetSelect.addEventListener('change', function() {
+                    const preset = this.value;
+                    
+                    switch(preset) {
+                        case 'instagram':
+                            widthInput.value = 1080;
+                            heightInput.value = 1080;
+                            break;
+                        case 'youtube':
+                            widthInput.value = 1920;
+                            heightInput.value = 1080;
+                            break;
+                        case 'tiktok':
+                            widthInput.value = 1080;
+                            heightInput.value = 1920;
+                            break;
+                        case 'facebook':
+                            widthInput.value = 1280;
+                            heightInput.value = 720;
+                            break;
+                        case 'hd':
+                            widthInput.value = 1280;
+                            heightInput.value = 720;
+                            break;
+                        case 'fullhd':
+                            widthInput.value = 1920;
+                            heightInput.value = 1080;
+                            break;
+                        case '4k':
+                            widthInput.value = 3840;
+                            heightInput.value = 2160;
+                            break;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 
